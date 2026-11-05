@@ -1,0 +1,3 @@
+-dontwarn rikka.shizuku.**
+-keep class rikka.shizuku.** { *; }
+-keep class com.screenask.app.** { *; }

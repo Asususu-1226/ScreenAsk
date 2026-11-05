@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+.kotlin/
+local.properties
+**/build/
+*.iml
+captures/
+robolectric-deps/
+dist/
+*-log.txt
+*.log
+# Signing material stays local only
+keystore.properties
+keystore/
+*.jks
+*.keystore

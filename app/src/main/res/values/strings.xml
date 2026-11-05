@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">识屏问答</string>
+    <string name="accessibility_label">识屏问答 · 屏幕文字读取</string>
+    <string name="accessibility_description">用于在开启无障碍后帮助识屏问答读取当前屏幕文字，并可在 Android 11+ 上静默截图。不会上传任何数据，除非你主动触发识屏。</string>
+    <string name="tile_label">识屏问答</string>
+</resources>
