@@ -1,6 +1,5 @@
-val isCi = System.getenv("CI") == "true"
-
 pluginManagement {
+    val isCi = System.getenv("CI") == "true"
     repositories {
         if (!isCi) {
             maven { url = uri("https://maven.aliyun.com/repository/google") }
@@ -13,6 +12,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
+    val isCi = System.getenv("CI") == "true"
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         if (!isCi) {
