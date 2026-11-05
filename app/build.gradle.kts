@@ -70,7 +70,10 @@ android {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
             all {
-                it.systemProperty("robolectric.dependency.repo.url", "https://maven.aliyun.com/repository/public")
+                // Use the China mirror locally; CI runners reach Maven Central directly.
+                if (System.getenv("CI") != "true") {
+                    it.systemProperty("robolectric.dependency.repo.url", "https://maven.aliyun.com/repository/public")
+                }
                 val localDeps = rootProject.file("robolectric-deps")
                 if (localDeps.exists()) {
                     it.systemProperty("robolectric.offline", "true")
