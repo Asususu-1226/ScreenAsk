@@ -1,6 +1,7 @@
 # 识屏问答（ScreenAsk）v1.0.1
 
 [![Android CI](https://github.com/Asususu-1226/ScreenAsk/actions/workflows/android.yml/badge.svg)](https://github.com/Asususu-1226/ScreenAsk/actions/workflows/android.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 一款以**通知栏为主入口**的 Android 识屏问答应用：接入任意 OpenAI 兼容接口，采集屏幕/音频并交给多模态或语音模型，答案直接完整显示在通知栏，可在通知栏内追问。
 
@@ -164,6 +165,14 @@ app/src/main/java/com/screenask/app/
 ├── ShizukuHelper.kt              Shizuku 集成
 └── Permissions.kt                权限与系统设置入口
 ```
+
+## 许可证
+
+本项目基于 **GNU General Public License v3.0** 发布，完整文本见 [LICENSE](LICENSE)。
+
+- 你可以自由使用、修改和分发本项目。
+- 分发修改后的版本或二进制（包括 APK）时，必须同样以 GPL-3.0 授权，并向接收者提供对应的完整源代码。
+- 本项目不提供任何担保，详见许可证原文。
 
 ## 免责声明
 
