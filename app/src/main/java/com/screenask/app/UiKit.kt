@@ -128,6 +128,14 @@ class UiKit(private val activity: AppCompatActivity) {
             ).apply { topMargin = dp(10) }
         }
         val edit = layout.findViewById<TextInputEditText>(R.id.input_edit)
+        // All instances share the XML id "input_edit". Android saves/restores view
+        // state by id, so on activity recreation one saved text (e.g. the STT
+        // language "zh") would be written into every input. Give each instance a
+        // unique id and never persist its own state; values always come from Prefs.
+        layout.id = View.generateViewId()
+        edit.id = View.generateViewId()
+        layout.isSaveEnabled = false
+        edit.isSaveEnabled = false
         edit.apply {
             setText(value)
             textSize = 14.5f

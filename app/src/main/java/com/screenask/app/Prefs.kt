@@ -91,15 +91,39 @@ object Prefs {
 
     fun load(context: Context): AppConfig {
         val prefs = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+
+        // Defensive repair for values that may have been written by the old
+        // duplicate-input-id bug (many fields restored as the string "zh").
+        fun saneUrl(value: String?, fallback: String): String {
+            val trimmed = value?.trim().orEmpty()
+            if (trimmed.isBlank() || trimmed == "zh") return fallback
+            return if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) trimmed else fallback
+        }
+
+        fun saneModel(value: String?, fallback: String): String {
+            val trimmed = value?.trim().orEmpty()
+            return if (trimmed.isBlank() || trimmed == "zh") fallback else trimmed
+        }
+
+        fun saneText(value: String?, fallback: String): String {
+            val text = value ?: return fallback
+            return if (text.isBlank() || text == "zh") fallback else text
+        }
+
         fun profile(prefix: String, defaultUrl: String, defaultModel: String): ApiProfile {
+            val backupUrlRaw = prefs.getString(prefix + "_backup_url", "").orEmpty()
+            val backupUrl = if (backupUrlRaw.startsWith("http://") || backupUrlRaw.startsWith("https://")) backupUrlRaw else ""
+            val backupModelRaw = prefs.getString(prefix + "_backup_model", "").orEmpty()
             return ApiProfile(
-                baseUrl = prefs.getString(prefix + "_url", defaultUrl) ?: defaultUrl,
-                apiKey = SecretStore.decrypt(prefs.getString(prefix + "_key", "").orEmpty()),
-                model = prefs.getString(prefix + "_model", defaultModel) ?: defaultModel,
-                backupBaseUrl = prefs.getString(prefix + "_backup_url", "").orEmpty(),
+                baseUrl = saneUrl(prefs.getString(prefix + "_url", defaultUrl), defaultUrl),
+                apiKey = SecretStore.decrypt(prefs.getString(prefix + "_key", "").orEmpty()).let {
+                    if (it == "zh") "" else it
+                },
+                model = saneModel(prefs.getString(prefix + "_model", defaultModel), defaultModel),
+                backupBaseUrl = backupUrl,
                 backupApiKey = SecretStore.decrypt(prefs.getString(prefix + "_backup_key", "").orEmpty()),
-                backupModel = prefs.getString(prefix + "_backup_model", "").orEmpty(),
-                extraHeaders = prefs.getString(prefix + "_headers", "").orEmpty(),
+                backupModel = if (backupModelRaw == "zh") "" else backupModelRaw,
+                extraHeaders = saneText(prefs.getString(prefix + "_headers", ""), ""),
                 timeoutSeconds = prefs.getInt(prefix + "_timeout", 120).coerceIn(5, 600)
             )
         }
@@ -109,8 +133,8 @@ object Prefs {
             stt = profile("stt", "https://api.openai.com/v1", "whisper-1"),
             multimodal = profile("multi", "https://api.openai.com/v1", "gpt-4o-mini"),
             useMultimodal = prefs.getBoolean("use_multi", true),
-            prompt = prefs.getString("prompt", defaults.prompt) ?: defaults.prompt,
-            userPrompt = prefs.getString("user_prompt", defaults.userPrompt) ?: defaults.userPrompt,
+            prompt = saneText(prefs.getString("prompt", defaults.prompt), defaults.prompt),
+            userPrompt = saneText(prefs.getString("user_prompt", defaults.userPrompt), defaults.userPrompt),
             delaySeconds = prefs.getInt("delay", 3).coerceIn(0, 30),
             temperature = prefs.getFloat("temperature", 0.3f).coerceIn(0f, 2f),
             topP = prefs.getFloat("top_p", 1f).coerceIn(0f, 1f),
@@ -136,7 +160,9 @@ object Prefs {
             keepHistory = prefs.getBoolean("keep_history", true),
             historyLimit = prefs.getInt("history_limit", 200).coerceIn(10, 1000),
             autoStartOnBoot = prefs.getBoolean("boot_launcher", true),
-            extraBodyJson = prefs.getString("extra_body_json", "").orEmpty(),
+            extraBodyJson = prefs.getString("extra_body_json", "").orEmpty().let {
+                if (it.trim() == "zh") "" else it
+            },
             autoCopyAnswer = prefs.getBoolean("auto_copy", false),
             voiceReadAnswer = prefs.getBoolean("voice_read", false)
         )

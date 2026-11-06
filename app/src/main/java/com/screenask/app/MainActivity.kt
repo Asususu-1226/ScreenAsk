@@ -638,6 +638,14 @@ class MainActivity : AppCompatActivity() {
             toast("已清除本地数据")
         }
 
+        val blackScreen = card(panel, "截图黑屏？", "部分系统默认开启屏幕采集保护，会导致截图全黑或空白")
+        blackScreen.addView(
+            caption("请进入“开发者选项 → 关闭屏幕采集保护”（不同系统可能显示为“禁止屏幕截图保护 / Disable screen capture protection”），然后重新识屏。本应用的“保护本应用界面”只影响本应用自身，不需要关闭。")
+        )
+        button(blackScreen, "打开开发者选项", outlined = true) {
+            Permissions.openDeveloperOptions(this)
+        }
+
         val accessibility = card(panel, "无障碍（推荐）", "用于读取屏幕文字，并在 Android 11+ 免授权截图")
         accessibilityStatusText = caption("状态：读取中…")
         accessibility.addView(accessibilityStatusText)

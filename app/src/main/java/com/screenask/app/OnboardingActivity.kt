@@ -348,6 +348,9 @@ class OnboardingActivity : AppCompatActivity() {
         card.addView(
             ui.caption("提示：常驻录屏会显示系统录屏提示；无障碍静默截图在受保护页面可能失败。")
         )
+        card.addView(
+            ui.caption("若识屏截图全黑：请在“开发者选项 → 关闭屏幕采集保护”（部分 MIUI/HyperOS 或定制系统提供该开关），然后重试。")
+        )
         return panel
     }
 

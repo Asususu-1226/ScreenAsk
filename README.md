@@ -1,4 +1,4 @@
-# 识屏问答（ScreenAsk）v1.0.1
+# 识屏问答（ScreenAsk）v1.0.2
 
 [![Android CI](https://github.com/Asususu-1226/ScreenAsk/actions/workflows/android.yml/badge.svg)](https://github.com/Asususu-1226/ScreenAsk/actions/workflows/android.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -136,11 +136,12 @@ cp keystore.properties.example keystore.properties
 ## 已知限制
 
 1. 受 `FLAG_SECURE` 保护的窗口（部分银行、考试、视频应用）截图会是黑屏或空白，系统限制，无法绕过。
-2. 系统内部音频采集需要源应用允许 Playback Capture（`allowAudioPlaybackCapture`）；不允许时录制为静音，请改用麦克风模式。
-3. Android 通知的展开长度受系统 UI 限制（通常数千字符），超长答案请打开历史页查看。
-4. MediaProjection 在锁屏/切换用户/系统回收时会被终止，需要重新授权（常驻模式也遵循该限制）。
-5. 无障碍静默截图在 Android 11+ 可用，Android 10 及以下只能使用 MediaProjection。
-6. Shizuku 为第三方应用，需要单独安装；不同 ROM 上 `appops` 命令支持情况可能不同。
+2. 部分系统（MIUI/HyperOS 及部分定制 ROM）默认开启“屏幕采集保护”，会导致截图全黑。请到 **开发者选项 → 关闭屏幕采集保护**（名称可能为“禁止屏幕截图保护 / Disable screen capture protection”）后重试。本应用的“保护本应用界面”只影响自身，无需关闭。
+3. 系统内部音频采集需要源应用允许 Playback Capture（`allowAudioPlaybackCapture`）；不允许时录制为静音，请改用麦克风模式。
+4. Android 通知的展开长度受系统 UI 限制（通常数千字符），超长答案请打开历史页查看。
+5. MediaProjection 在锁屏/切换用户/系统回收时会被终止，需要重新授权（常驻模式也遵循该限制）。
+6. 无障碍静默截图在 Android 11+ 可用，Android 10 及以下只能使用 MediaProjection。
+7. Shizuku 为第三方应用，需要单独安装；不同 ROM 上 `appops` 命令支持情况可能不同。
 
 ## 项目结构
 

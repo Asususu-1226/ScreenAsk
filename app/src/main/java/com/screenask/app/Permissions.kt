@@ -61,6 +61,16 @@ object Permissions {
         }
     }
 
+    /** Some ROMs expose "Disable screen capture protection" in Developer options. */
+    fun openDeveloperOptions(context: Context) {
+        runCatching {
+            context.startActivity(
+                Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }.onFailure { openAppDetails(context) }
+    }
+
     fun openAppDetails(context: Context) {
         runCatching {
             context.startActivity(

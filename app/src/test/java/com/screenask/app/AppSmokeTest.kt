@@ -1,6 +1,10 @@
 package com.screenask.app
 
 import android.content.Context
+import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
 import androidx.test.core.app.ApplicationProvider
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -130,6 +134,69 @@ class AppSmokeTest {
         val manager = context.getSystemService(android.app.NotificationManager::class.java)
         assertTrue(manager.getNotificationChannel(NotificationHelper.CHANNEL_ANSWER) != null)
         NotificationHelper.cancelSession(context)
+    }
+
+    private fun collectInputTexts(root: View): List<String> {
+        val values = ArrayList<String>()
+        fun walk(view: View) {
+            if (view is EditText) values.add(view.text?.toString().orEmpty())
+            if (view is ViewGroup) {
+                for (i in 0 until view.childCount) walk(view.getChildAt(i))
+            }
+        }
+        walk(root)
+        return values
+    }
+
+    @Test
+    fun recreationDoesNotCopyOneInputIntoAllFields() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        Prefs.setOnboarded(context, true)
+        Prefs.save(
+            context,
+            AppConfig(
+                delaySeconds = 7,
+                temperature = 0.55f,
+                maxTokens = 1234,
+                historyLimit = 321,
+                sttLanguage = "zh"
+            )
+        )
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup()
+        val before = collectInputTexts(controller.get().window.decorView)
+        val state = Bundle()
+        controller.saveInstanceState(state)
+        controller.pause().stop().destroy()
+
+        val controller2 = Robolectric.buildActivity(MainActivity::class.java)
+            .create(state).start().resume().visible()
+        val after = collectInputTexts(controller2.get().window.decorView)
+        assertEquals(before.size, after.size)
+        assertEquals(before, after)
+        // Only the STT language field is allowed to contain "zh".
+        assertEquals(1, after.count { it == "zh" })
+        controller2.pause().stop().destroy()
+    }
+
+    @Test
+    fun corruptedSettingsAreRepairedOnLoad() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val prefs = context.getSharedPreferences("screenask_settings", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString("multi_url", "zh")
+            .putString("multi_model", "zh")
+            .putString("vision_url", "zh")
+            .putString("vision_model", "zh")
+            .putString("prompt", "zh")
+            .putString("user_prompt", "zh")
+            .putString("stt_language", "zh")
+            .apply()
+        val config = Prefs.load(context)
+        assertTrue(config.multimodal.baseUrl.startsWith("https://"))
+        assertEquals("gpt-4o-mini", config.multimodal.model)
+        assertTrue(config.vision.baseUrl.startsWith("https://"))
+        assertEquals(AppConfig.DEFAULT_PROMPT, config.prompt)
+        assertEquals("zh", config.sttLanguage)
     }
 
     @Test

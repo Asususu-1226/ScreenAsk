@@ -71,6 +71,8 @@ class PreviewRenderTest {
         render(main.window.decorView, "main-api.png")
         tabs.getTabAt(2)?.select()
         render(main.window.decorView, "main-params.png")
+        tabs.getTabAt(4)?.select()
+        render(main.window.decorView, "main-privacy.png")
 
         val onboarding = Robolectric.buildActivity(OnboardingActivity::class.java).setup().get()
         render(onboarding.window.decorView, "onboarding-step1.png")
